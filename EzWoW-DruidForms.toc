@@ -1,0 +1,33 @@
+## Interface: 16001
+## Title: EzWoW - Druid Forms
+## Title-enUS: EzWoW - Druid Forms
+## Title-koKR: EzWoW - Druid Forms
+## Title-deDE: EzWoW - Druid Forms
+## Title-frFR: EzWoW - Druid Forms
+## Title-esES: EzWoW - Druid Forms
+## Title-esMX: EzWoW - Druid Forms
+## Title-ruRU: EzWoW - Druid Forms
+## Title-zhCN: EzWoW - Druid Forms
+## Title-zhTW: EzWoW - Druid Forms
+## Notes: One key for the right druid form: water, outdoors, indoors or combat. (/ezdf)
+## Notes-enUS: One key for the right druid form: water, outdoors, indoors or combat. (/ezdf)
+## Notes-koKR: 단축키 하나로 상황(물속·야외·실내·전투)에 맞는 드루이드 변신을 합니다. (/ezdf, /드루이드)
+## Notes-deDE: Eine Taste für die passende Druidengestalt: Wasser, draußen, drinnen oder Kampf. (/ezdf)
+## Notes-frFR: Une touche pour la bonne forme de druide : eau, extérieur, intérieur ou combat. (/ezdf)
+## Notes-esES: Una tecla para la forma de druida adecuada: agua, exterior, interior o combate. (/ezdf)
+## Notes-esMX: Una tecla para la forma de druida adecuada: agua, exterior, interior o combate. (/ezdf)
+## Notes-ruRU: Одна клавиша для подходящего облика друида: вода, улица, помещение или бой. (/ezdf)
+## Notes-zhCN: 一个键按情况（水中、户外、室内、战斗）切换合适的德鲁伊形态。(/ezdf)
+## Notes-zhTW: 一個鍵依情況（水中、戶外、室內、戰鬥）切換合適的德魯伊形態。(/ezdf)
+## Author: qqhrqqhr2
+## Version: 1.0.0
+## Category: EzWoW
+## IconTexture: Interface\AddOns\EzWoW-DruidForms\Media\Icon
+## SavedVariables: EzWoW_DruidFormsDB
+
+Core\Init.lua
+Core\Locales.lua
+Core\UIKit.lua
+Modules\Forms.lua
+UI\LanguageDropdown.lua
+UI\OptionsWindow.lua
