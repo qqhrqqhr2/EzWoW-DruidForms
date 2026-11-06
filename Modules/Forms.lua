@@ -449,12 +449,17 @@ function ns.ToggleQuickMenu(anchor)
     if not menu then buildMenu() end
     if menu:IsShown() then menu:Hide() return end
     menu:ClearAllPoints()
-    local _, y = anchor:GetCenter()
+    -- placed by screen position, not anchored to the secure button: a frame anchored
+    -- to a protected frame becomes protected too, and could not be shown/hidden in combat
+    local left, top, bottom = anchor:GetLeft(), anchor:GetTop(), anchor:GetBottom()
+    local ratio = (anchor:GetEffectiveScale() or 1) / (UIParent:GetEffectiveScale() or 1)
     local uiH = UIParent:GetHeight() or 768
-    if y and y < uiH / 2 then
-        menu:SetPoint("BOTTOMLEFT", anchor, "TOPLEFT", 0, 4)
+    if not (left and top and bottom) then
+        menu:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    elseif (top + bottom) / 2 * ratio < uiH / 2 then
+        menu:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", left * ratio, top * ratio + 4)
     else
-        menu:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -4)
+        menu:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left * ratio, bottom * ratio - 4)
     end
     menu:Show()
     ns.RefreshQuickMenu()
