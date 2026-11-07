@@ -95,52 +95,35 @@ local function placeKinds()
 end
 
 function ns.BuildMacro()
+    -- One /cast line with the cases in order (the first true one is cast). A "!"
+    -- before a name never leaves that form when already in it; without "!" a second
+    -- press out of combat leaves the form (the game's own toggle). Kept short: a
+    -- button's macro holds at most 255 bytes.
     local f, db = ns.forms, ns.db
-    local lines = {}
-    local function add(line) lines[#lines + 1] = line end
-
+    local lines, clauses = {}, {}
+    local function clause(cond, name) clauses[#clauses + 1] = cond .. " " .. name end
     if db.useModifiers then
-        add("/cancelform [mod:alt]")
-        add("/stopmacro [mod:alt]")
-        local guard, cast = {}, {}
-        if f.bear then
-            guard[#guard + 1] = "[mod:shift,form:" .. f.bear.index .. "]"
-            cast[#cast + 1] = "[mod:shift] " .. f.bear.name
-        end
-        if f.cat then
-            guard[#guard + 1] = "[mod:ctrl,form:" .. f.cat.index .. "]"
-            cast[#cast + 1] = "[mod:ctrl] " .. f.cat.name
-        end
-        -- already in that form: stay (a second cast would leave it)
-        if #guard > 0 then add("/stopmacro " .. table.concat(guard)) end
-        if #cast > 0 then add("/cast " .. table.concat(cast, "; ")) end
-        add("/stopmacro [mod:shift][mod:ctrl]")
+        lines[#lines + 1] = "/cancelform [mod:alt]"
+        lines[#lines + 1] = "/stopmacro [mod:alt]"
+        if f.bear then clause("[mod:shift]", "!" .. f.bear.name) end
+        if f.cat then clause("[mod:ctrl]", "!" .. f.cat.name) end
     end
-
-    -- in combat while swimming: aquatic form (already in it: stay)
-    if db.useAquatic and f.aquatic then
-        add("/stopmacro [combat,swimming,form:" .. f.aquatic.index .. "]")
-        add("/cast [combat,swimming] " .. f.aquatic.name)
-        add("/stopmacro [combat,swimming]")
-    end
-
     local combatKind = ns.CombatKind()
-    if combatKind == "caster" then
-        add("/cancelform [combat]")
-    else
-        local form = f[combatKind]
-        add("/stopmacro [combat,form:" .. form.index .. "]")
-        add("/cast [combat] " .. form.name)
-    end
-    add("/stopmacro [combat]")
-
-    -- out of combat a second press in the same form turns it off (the game's own toggle)
     local water, outdoor, indoor = placeKinds()
-    local cast = {}
-    if water then cast[#cast + 1] = "[swimming] " .. f[water].name end
-    if outdoor then cast[#cast + 1] = "[outdoors] " .. f[outdoor].name end
-    if indoor then cast[#cast + 1] = "[indoors] " .. f[indoor].name end
-    if #cast > 0 then add("/cast " .. table.concat(cast, "; ")) end
+    local swimForm = db.useAquatic and f.aquatic and "aquatic" or nil
+    if swimForm then clause("[swimming]", "!" .. f.aquatic.name) end
+    if combatKind == "caster" then
+        -- in combat (not swimming, no modifier): back to caster form, nothing cast
+        local cond = "[combat" .. (db.useModifiers and ",nomod" or "") .. (swimForm and ",noswimming" or "") .. "]"
+        lines[#lines + 1] = "/cancelform " .. cond
+        lines[#lines + 1] = "/stopmacro " .. cond
+    else
+        clause("[combat]", "!" .. f[combatKind].name)
+    end
+    if water and not swimForm then clause("[swimming]", f[water].name) end
+    if outdoor then clause("[outdoors]", f[outdoor].name) end
+    if indoor then clause("[indoors]", f[indoor].name) end
+    if #clauses > 0 then lines[#lines + 1] = "/cast " .. table.concat(clauses, "; ") end
     return table.concat(lines, "\n")
 end
 
@@ -174,13 +157,64 @@ local function shortKey(key)
     return key
 end
 
+-- A button's macro text holds at most 255 bytes (Korean names take 3 bytes a
+-- letter). A longer macro is cut into parts: each part ends with /click on a
+-- hidden button that runs the next part, so a /stopmacro still ends the whole
+-- macro (the /click after it is never reached).
+local MACRO_LIMIT = 255
+local chainButtons = {}
+
+local function chainButton(index)
+    local b = chainButtons[index]
+    if not b then
+        b = CreateFrame("Button", ns.BUTTON_NAME .. "Part" .. index, UIParent, "SecureActionButtonTemplate")
+        b:SetSize(1, 1)
+        b:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -10, 10)
+        b:RegisterForClicks("AnyUp", "AnyDown")
+        b:SetAttribute("type", "macro")
+        chainButtons[index] = b
+    end
+    return b
+end
+
+-- Returns the first part; the rest go onto the chain buttons. Protected: out of combat.
+local function splitMacro(macro)
+    local lines = {}
+    for line in macro:gmatch("[^\n]+") do lines[#lines + 1] = line end
+    local parts, current = {}, {}
+    local size = 0
+    -- room left for the "/click <next>" line
+    -- with "cast on key down" on, /click must say it is a key-down click
+    local clickTail = keyDownMode() and " LeftButton 1" or ""
+    local reserve = #("/click " .. ns.BUTTON_NAME .. "Part99" .. clickTail) + 1
+    for _, line in ipairs(lines) do
+        if size > 0 and size + 1 + #line > MACRO_LIMIT - reserve then
+            parts[#parts + 1] = current
+            current, size = {}, 0
+        end
+        current[#current + 1] = line
+        size = size + (size > 0 and 1 or 0) + #line
+    end
+    if #current > 0 then parts[#parts + 1] = current end
+    for index = #parts - 1, 1, -1 do
+        table.insert(parts[index], "/click " .. ns.BUTTON_NAME .. "Part" .. index .. clickTail)
+    end
+    for index = 2, #parts do
+        chainButton(index - 1):SetAttribute("macrotext", table.concat(parts[index], "\n"))
+    end
+    for index = #parts, #chainButtons do
+        if chainButtons[index] then chainButtons[index]:SetAttribute("macrotext", "") end
+    end
+    return table.concat(parts[1] or {}, "\n")
+end
+
 -- Applies the macro to both buttons, plus the visible button's look and place.
 -- Protected: out of combat.
 function ns.ApplyButton()
     if not button then return end
     ns.RunAfterCombat("button", function()
         local db = ns.db
-        local macro = ns.BuildMacro()
+        local macro = splitMacro(ns.BuildMacro())
         -- key button: follows the "cast on key down" setting
         keyButton:RegisterForClicks(keyDownMode() and "AnyDown" or "AnyUp")
         keyButton:SetAttribute("type", "macro")
