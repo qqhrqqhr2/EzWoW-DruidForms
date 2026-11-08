@@ -255,10 +255,11 @@ local function predictIcon()
         if IsShiftKeyDown() and f.bear then return iconOf("bear") end
         if IsControlKeyDown() and f.cat then return iconOf("cat") end
     end
+    -- swimming: the macro casts "!Aquatic Form", which keeps the form on a second press
+    if db.useAquatic and f.aquatic and IsSwimming and IsSwimming() then
+        return iconOf("aquatic")
+    end
     if ns.InCombat() or (UnitAffectingCombat and UnitAffectingCombat("player")) then
-        if db.useAquatic and f.aquatic and IsSwimming and IsSwimming() then
-            return iconOf("aquatic")
-        end
         return iconOf(ns.CombatKind())
     end
     local water, outdoor, indoor = placeKinds()
