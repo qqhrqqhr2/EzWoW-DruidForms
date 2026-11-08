@@ -52,44 +52,39 @@ KEY = "F"
 
 def build_macro(f, db):
     """Same lines as ns.BuildMacro() in Modules/Forms.lua."""
-    lines = []
+    # one /cast line, first true case wins; "!" never leaves a form you are already in
+    lines, clauses = [], []
+
+    def clause(cond, name):
+        clauses.append(f"{cond} {name}")
     if db["useModifiers"]:
         lines += ["/cancelform [mod:alt]", "/stopmacro [mod:alt]"]
-        guard, cast = [], []
         if "bear" in f:
-            guard.append(f"[mod:shift,form:{f['bear'][0]}]")
-            cast.append(f"[mod:shift] {f['bear'][1]}")
+            clause("[mod:shift]", "!" + f["bear"][1])
         if "cat" in f:
-            guard.append(f"[mod:ctrl,form:{f['cat'][0]}]")
-            cast.append(f"[mod:ctrl] {f['cat'][1]}")
-        if guard:
-            lines.append("/stopmacro " + "".join(guard))
-        if cast:
-            lines.append("/cast " + "; ".join(cast))
-        lines.append("/stopmacro [mod:shift][mod:ctrl]")
-    if db["useAquatic"] and "aquatic" in f:
-        lines += [f"/stopmacro [combat,swimming,form:{f['aquatic'][0]}]",
-                  f"/cast [combat,swimming] {f['aquatic'][1]}", "/stopmacro [combat,swimming]"]
+            clause("[mod:ctrl]", "!" + f["cat"][1])
     kind = db["combatForm"]
     if kind != "caster" and kind not in f:
         kind = "bear" if "bear" in f else ("cat" if "cat" in f else "caster")
-    if kind == "caster":
-        lines.append("/cancelform [combat]")
-    else:
-        lines += [f"/stopmacro [combat,form:{f[kind][0]}]", f"/cast [combat] {f[kind][1]}"]
-    lines.append("/stopmacro [combat]")
     outdoor = ("travel" if db["useTravel"] and "travel" in f else None) or ("cat" if "cat" in f else None) or ("bear" if "bear" in f else None)
     indoor = (("cat" if "cat" in f else None) or ("bear" if "bear" in f else None)) if db["indoorCat"] else None
     water = ("aquatic" if db["useAquatic"] and "aquatic" in f else None) or outdoor
-    cast = []
-    if water:
-        cast.append(f"[swimming] {f[water][1]}")
+    swim = db["useAquatic"] and "aquatic" in f
+    if swim:
+        clause("[swimming]", "!" + f["aquatic"][1])
+    if kind == "caster":
+        cond = "[combat" + (",nomod" if db["useModifiers"] else "") + (",noswimming" if swim else "") + "]"
+        lines += ["/cancelform " + cond, "/stopmacro " + cond]
+    else:
+        clause("[combat]", "!" + f[kind][1])
+    if water and not swim:
+        clause("[swimming]", f[water][1])
     if outdoor:
-        cast.append(f"[outdoors] {f[outdoor][1]}")
+        clause("[outdoors]", f[outdoor][1])
     if indoor:
-        cast.append(f"[indoors] {f[indoor][1]}")
-    if cast:
-        lines.append("/cast " + "; ".join(cast))
+        clause("[indoors]", f[indoor][1])
+    if clauses:
+        lines.append("/cast " + "; ".join(clauses))
     return lines
 
 
@@ -116,15 +111,14 @@ TEXT = {
         "badge": "설정창", "langLabel": "한국어",
         "sitTitle": "한 번 누르면",
         "sitRows": [
-            ("전투 밖 · 물속", "aquatic", "수중 동물 변신"),
+            ("물속 (전투 중에도)", "aquatic", "수중 동물 변신 (켰을 때)"),
             ("전투 밖 · 야외", "travel", "여행 변신 (없으면 표범)"),
             ("전투 밖 · 실내", "cat", "표범 변신 (끌 수 있음)"),
-            ("같은 변신에서 다시", "caster", "원래 모습 (전투 밖)"),
+            ("야외·실내에서 다시", "caster", "원래 모습 (전투 밖)"),
             ("전투 중", "bear", "고른 변신 · 기본 곰"),
-            ("전투 중 · 물속", "aquatic", "수중 동물 변신 (켰을 때)"),
-            ("Shift / Ctrl / Alt", "mods", "곰 / 표범 / 변신 풀기"),
+            ("Shift / Ctrl / Alt (언제나)", "mods", "곰 / 표범 / 변신 풀기"),
         ],
-        "sitFoot": "배운 변신만 씁니다. 전투 중에는 같은 변신을 다시 눌러도 풀리지 않습니다.",
+        "sitFoot": "배운 변신만 씁니다. 전투 중·물속·Shift/Ctrl 변신은 다시 눌러도 풀리지 않습니다.",
         "drag": "Ctrl + 드래그",
         "notes": [
             ("화면 버튼", "왼쪽 클릭으로 변신합니다. 아이콘은 지금 누르면 될 변신으로 계속 바뀝니다."),
@@ -140,7 +134,7 @@ TEXT = {
             ("전투 중 누르면", "곰 · 표범 · 원래 모습 · 달빛야수. 이미 그 변신이면 풀리지 않습니다."),
             ("전투 밖에서 누르면", "물속 → 수중(전투 중 물속도), 야외 → 여행, 실내 → 표범, 보조키 Shift = 곰 · Ctrl = 표범 · Alt = 풀기."),
             ("화면 버튼", "표시 여부, 크기 24~64, 위치 초기화. Ctrl + 드래그로 이동."),
-            ("지금 쓰는 매크로", "설정대로 만든 매크로를 보여 줍니다. 길어지면 창이 늘어납니다."),
+            ("지금 쓰는 매크로", "설정대로 만든 매크로를 보여 줍니다. 길면 자동으로 나눠 실행하고, 창도 함께 늘어납니다."),
             ("언어 · 후원", "자동 + 8개 언어, 후원 링크 복사."),
         ],
         "note": "애드온 코드의 크기·좌표·색상·문구로 재현한 예시 화면입니다. 변신 아이콘은 단순한 도형이고, 주문 이름·단축키는 예시입니다.",
@@ -151,15 +145,14 @@ TEXT = {
         "badge": "Settings", "langLabel": "English",
         "sitTitle": "One press does",
         "sitRows": [
-            ("Out of combat · swimming", "aquatic", "Aquatic Form"),
+            ("Swimming (also in combat)", "aquatic", "Aquatic Form (when enabled)"),
             ("Out of combat · outdoors", "travel", "Travel Form, else Cat"),
             ("Out of combat · indoors", "cat", "Cat Form (optional)"),
-            ("Again in the same form", "caster", "Caster form (out of combat)"),
+            ("Again, outdoors / indoors", "caster", "Caster form (out of combat)"),
             ("In combat", "bear", "Your choice · Bear by default"),
-            ("In combat · swimming", "aquatic", "Aquatic Form (when enabled)"),
-            ("Shift / Ctrl / Alt", "mods", "Bear / Cat / leave form"),
+            ("Shift / Ctrl / Alt, any time", "mods", "Bear / Cat / leave form"),
         ],
-        "sitFoot": "Only learned forms are used. In combat a second press never drops the form.",
+        "sitFoot": "Only learned forms are used. Combat, swimming and Shift/Ctrl forms are kept when you press again.",
         "drag": "Ctrl + drag",
         "notes": [
             ("On-screen button", "Left-click to shift. The icon always shows the form the next press gives."),
@@ -175,7 +168,7 @@ TEXT = {
             ("In combat", "Bear · Cat · Caster · Moonkin. Already in that form: it stays."),
             ("Out of combat", "Water → Aquatic (also in combat), outdoors → Travel, indoors → Cat, Shift = Bear · Ctrl = Cat · Alt = leave form."),
             ("On-screen button", "Show or hide, size 24–64, reset position. Ctrl + drag moves it."),
-            ("Current macro", "The macro built from your settings. The window grows with it."),
+            ("Current macro", "The macro built from your settings. A long one is split up and run in parts automatically; the window grows with it."),
             ("Language · donate", "Automatic + 8 languages, copy the donate link."),
         ],
         "note": "Mock-ups rebuilt from the sizes, coordinates, colours and strings in the addon code. Form icons are flat shapes; spell names and the key are examples.",
@@ -439,7 +432,7 @@ def settings_page(lang, L, icon_uri, version):
     section("secMacro", 516)
     macro = "\n".join(build_macro(f, DB))
     p.append(f'<div id="macro" class="abs" style="{g.box(22, 542, 396)}font-size:{g(10)};color:{C["textMuted"]};'
-             f'line-height:1.25;white-space:pre-wrap;word-break:break-all">{esc(macro)}</div>')
+             f'line-height:1.25;white-space:pre-wrap;overflow-wrap:anywhere">{esc(macro)}</div>')
     # bottom row: anchored BOTTOMLEFT 20,32 / BOTTOMRIGHT -20,32 / foot BOTTOM 0,12 -> placed by the script
     lang_label = f'{L["language"]}: {t["langLabel"]} ▼'
     p.append(f'<div id="langBtn" class="wbtn" style="left:{g(20)};width:{g(197)};height:{g(28)};font-size:{g(12)}">{esc(lang_label)}</div>')
@@ -486,13 +479,18 @@ def find_chrome():
 def render(chrome, html_path, png_path, profile):
     url = Path(html_path).resolve().as_uri()
     base = [chrome, "--headless=new", "--disable-gpu", "--hide-scrollbars", f"--user-data-dir={profile}"]
-    dom = subprocess.run(base + ["--window-size=1600,2000", "--dump-dom", url], capture_output=True, text=True,
-                         encoding="utf-8", errors="replace", timeout=120).stdout
+    # output goes to files, not pipes: a helper process Chrome leaves behind can keep a
+    # pipe open and make the call wait forever
+    dom_path = Path(html_path).with_suffix(".dom.txt")
+    with open(dom_path, "wb") as fh:
+        subprocess.run(base + ["--window-size=1600,2000", "--dump-dom", url], stdout=fh,
+                       stderr=subprocess.DEVNULL, timeout=120)
+    dom = dom_path.read_text(encoding="utf-8", errors="replace")
     m = re.search(r'data-h="(\d+)"', dom)
     height = int(m.group(1)) if m else 1400
     mm = re.search(r'data-macro="(\d+)"', dom)
     subprocess.run(base + [f"--window-size=1600,{height}", f"--screenshot={png_path}", url],
-                   capture_output=True, timeout=120)
+                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
     return height, (mm.group(1) if mm else None)
 
 
