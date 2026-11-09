@@ -21,7 +21,7 @@
 ## Notes-zhCN: 一个键按情况（水中、户外、室内、战斗）切换合适的德鲁伊形态。(/ezdf)
 ## Notes-zhTW: 一個鍵依情況（水中、戶外、室內、戰鬥）切換合適的德魯伊形態。(/ezdf)
 ## Author: qqhrqqhr2
-## Version: 1.0.3
+## Version: 1.0.4
 ## Category: EzWoW
 ## IconTexture: Interface\AddOns\EzWoW-DruidForms\Media\Icon
 ## SavedVariables: EzWoW_DruidFormsDB
