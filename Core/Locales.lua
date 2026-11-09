@@ -39,8 +39,8 @@ local UI_STRINGS = {
         keyModTaken = "이미 다른 기능에 쓰이는 조합이 있어 Shift/Ctrl 변신이 이 키로 동작하지 않습니다: %s",
         combatLater = "전투가 끝난 뒤에 할 수 있습니다.",
         form_bear = "곰", form_cat = "표범", form_caster = "원래 모습", form_moonkin = "달빛야수",
-        opt_useAquatic = "물속이면 수중 동물 변신",
-        opt_useTravel = "야외면 여행 변신 (없으면 표범)",
+        opt_useAquatic = "물속이면 수중 생물 변신",
+        opt_useTravel = "야외면 날쌘 동물 변신 (없으면 표범)",
         opt_indoorCat = "실내면 표범 변신 (끄면 실내에서는 그대로)",
         opt_useModifiers = "Shift = 곰 · Ctrl = 표범 · Alt = 변신 풀기",
         opt_showButton = "화면에 버튼 표시 (다음 변신 아이콘)",
@@ -48,10 +48,11 @@ local UI_STRINGS = {
         learned = "배운 변신:", noForms = "아직 배운 변신이 없습니다. 배우면 자동으로 쓸 수 있습니다.",
         notDruid = "드루이드 전용 애드온입니다. 이 캐릭터에서는 아무것도 하지 않습니다.",
         tipKey = "단축키: %s", tipNoKey = "단축키가 없습니다 (/ezdf)",
-        tipRules = "물속: 수중 · 야외: 여행 · 실내: 표범 · 전투: 설정한 변신. 같은 변신에서 다시 누르면 풀립니다 (전투 중 제외).",
+        tipRules = "물속: 수중 생물 · 야외: 날쌘 동물 · 실내: 표범 · 전투: 설정한 변신. 같은 변신에서 다시 누르면 풀립니다 (전투 중 제외).",
         language = "언어", donate = "후원 · 링크 복사", copy = "후원 링크 · Ctrl + C로 복사",
         panelDesc = "단축키 하나로 상황(물속·야외·실내·전투)에 맞는 드루이드 변신을 합니다. 배운 변신만 쓰고, 레벨에 따라 자동으로 맞춥니다.",
         panelOpen = "설정 열기 (/ezdf)",
+        learnLevel = "(%d레벨)", learnTalent = "(특성)",
     },
     enUS = {
         secMore = "More",
@@ -87,6 +88,7 @@ local UI_STRINGS = {
         language = "Language", donate = "Donate · Copy link", copy = "Donate link · Ctrl + C to copy",
         panelDesc = "One key for the right druid form: water, outdoors, indoors or combat. Only learned forms are used, so it follows your level.",
         panelOpen = "Open settings (/ezdf)",
+        learnLevel = "(level %d)", learnTalent = "(talent)",
     },
     deDE = {
         secMore = "Mehr",
@@ -122,6 +124,7 @@ local UI_STRINGS = {
         language = "Sprache", donate = "Spenden · Link kopieren", copy = "Spendenlink · Strg + C zum Kopieren",
         panelDesc = "Eine Taste für die passende Druidengestalt: Wasser, draußen, drinnen oder Kampf. Nur gelernte Gestalten werden genutzt.",
         panelOpen = "Einstellungen öffnen (/ezdf)",
+        learnLevel = "(Stufe %d)", learnTalent = "(Talent)",
     },
     frFR = {
         secMore = "Plus",
@@ -157,6 +160,7 @@ local UI_STRINGS = {
         language = "Langue", donate = "Faire un don · Copier", copy = "Lien de don · Ctrl + C pour copier",
         panelDesc = "Une touche pour la bonne forme de druide : eau, extérieur, intérieur ou combat. Seules les formes apprises sont utilisées.",
         panelOpen = "Ouvrir les options (/ezdf)",
+        learnLevel = "(niveau %d)", learnTalent = "(talent)",
     },
     esES = {
         secMore = "Más",
@@ -192,6 +196,7 @@ local UI_STRINGS = {
         language = "Idioma", donate = "Donar · Copiar enlace", copy = "Enlace de donación · Ctrl + C para copiar",
         panelDesc = "Una tecla para la forma de druida adecuada: agua, exterior, interior o combate. Solo usa formas aprendidas.",
         panelOpen = "Abrir opciones (/ezdf)",
+        learnLevel = "(nivel %d)", learnTalent = "(talento)",
     },
     ruRU = {
         secMore = "Ещё",
@@ -227,6 +232,7 @@ local UI_STRINGS = {
         language = "Язык", donate = "Поддержать · Ссылка", copy = "Ссылка · Ctrl + C для копирования",
         panelDesc = "Одна клавиша для подходящего облика друида: вода, улица, помещение или бой. Используются только изученные облики.",
         panelOpen = "Открыть настройки (/ezdf)",
+        learnLevel = "(%d ур.)", learnTalent = "(талант)",
     },
     zhCN = {
         secMore = "更多",
@@ -262,6 +268,7 @@ local UI_STRINGS = {
         language = "语言", donate = "赞助 · 复制链接", copy = "赞助链接 · Ctrl + C 复制",
         panelDesc = "一个键按情况（水中、户外、室内、战斗）切换合适的德鲁伊形态。只使用已学会的形态，随等级自动调整。",
         panelOpen = "打开设置 (/ezdf)",
+        learnLevel = "(%d级)", learnTalent = "(天赋)",
     },
     zhTW = {
         secMore = "更多",
@@ -297,6 +304,7 @@ local UI_STRINGS = {
         language = "語言", donate = "贊助 · 複製連結", copy = "贊助連結 · Ctrl + C 複製",
         panelDesc = "一個鍵依情況（水中、戶外、室內、戰鬥）切換合適的德魯伊形態。只使用已學會的形態，隨等級自動調整。",
         panelOpen = "開啟設定 (/ezdf)",
+        learnLevel = "(%d級)", learnTalent = "(天賦)",
     },
 }
 

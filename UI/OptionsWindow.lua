@@ -300,14 +300,16 @@ function ns:ToggleOptions()
 
         local combatKind = isDruid and ns.CombatKind() or db.combatForm
         for _, b in ipairs(combatBtns) do
-            b:SetLabel(ns:L("form_" .. b.kind))
+            b:SetLabel(isDruid and ns.FormLabel(ns:L("form_" .. b.kind), b.kind) or ns:L("form_" .. b.kind))
             local available = b.kind == "caster" or (ns.forms[b.kind] ~= nil)
             b:SetEnabledState(isDruid and available)
             b:SetActive(isDruid and combatKind == b.kind)
         end
         for _, item in ipairs(checks) do
             item.check:SetChecked(db[item.key] and true or false)
-            ns.FitText(item.label, ns:L("opt_" .. item.key), 370, 12, 9)
+            local text = ns:L("opt_" .. item.key)
+            if isDruid then text = ns.FormLabel(text, ns.OPTION_FORM[item.key]) end
+            ns.FitText(item.label, text, 370, 12, 9)
         end
         ns.FitText(sizeLabel, ns:L("buttonSize"), 120, 12, 9)
         sizeValue:SetText(tostring(db.buttonSize))

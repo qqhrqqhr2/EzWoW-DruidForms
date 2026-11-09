@@ -1,6 +1,6 @@
 <!--
 CurseForge summary (EN): One key for the right druid form: Aquatic in water, Travel outdoors, Cat indoors and your choice in combat, with an on-screen button.
-CurseForge summary (KO): 단축키 하나로 물속은 수중 동물, 야외는 여행, 실내는 표범, 전투 중에는 고른 변신. 화면 버튼과 빠른 설정 포함.
+CurseForge summary (KO): 단축키 하나로 물속은 수중 생물, 야외는 날쌘 동물, 실내는 표범, 전투 중에는 고른 변신. 화면 버튼과 빠른 설정 포함.
 -->
 
 # EzWoW - Druid Forms
@@ -53,7 +53,7 @@ Languages: English, 한국어, Deutsch, Français, Español, Русский, 简
 
 ## 한국어
 
-WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물속에서는 수중 동물 변신, 야외에서는 여행 변신, 실내에서는 표범 변신, 전투 중에는 고른 변신을 합니다. 배운 변신만 쓰므로 레벨에 따라 자동으로 맞춰지고, 화면 버튼이 지금 누르면 될 변신을 보여 줍니다.
+WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물속에서는 수중 생물 변신, 야외에서는 날쌘 동물 변신, 실내에서는 표범 변신, 전투 중에는 고른 변신을 합니다. 배운 변신만 쓰므로 레벨에 따라 자동으로 맞춰지고, 화면 버튼이 지금 누르면 될 변신을 보여 줍니다.
 
 ![화면 버튼과 빠른 설정](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/ui_ko.png)
 
@@ -64,8 +64,8 @@ WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물�
 ## 기능
 
 ### 단축키 하나로
-- **물속** (전투 중에도): 수중 동물 변신(켰을 때). 이미 수중 동물이면 그대로.
-- **전투 밖 · 야외**: 여행 변신(아직 없으면 표범).
+- **물속** (전투 중에도): 수중 생물 변신(켰을 때). 이미 수중 생물이면 그대로.
+- **전투 밖 · 야외**: 날쌘 동물 변신(아직 없으면 표범).
 - **전투 밖 · 실내**: 표범 변신(끄면 실내에서는 그대로).
 - **야외·실내에서 다시 누르면**: 원래 모습.
 - **전투 중**: 곰 · 표범 · 원래 모습 · 달빛야수 중 고른 변신(기본 곰). 다시 눌러도 풀리지 않습니다.

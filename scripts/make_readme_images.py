@@ -41,7 +41,7 @@ FONT = "'Noto Sans KR','Malgun Gothic',sans-serif"
 # Example character: a feral druid around level 40 (Moonkin Form not learned).
 # Stance bar order = learn order: 1 bear, 2 aquatic, 3 cat, 4 travel.
 FORMS = {
-    "ko": {"bear": (1, "광포한 곰 변신"), "aquatic": (2, "수중 동물 변신"), "cat": (3, "표범 변신"), "travel": (4, "치타 변신")},
+    "ko": {"bear": (1, "광포한 곰 변신"), "aquatic": (2, "수중 생물 변신"), "cat": (3, "표범 변신"), "travel": (4, "날쌘 동물 변신")},
     "en": {"bear": (1, "Dire Bear Form"), "aquatic": (2, "Aquatic Form"), "cat": (3, "Cat Form"), "travel": (4, "Travel Form")},
 }
 FORM_ORDER = ["bear", "aquatic", "cat", "travel", "moonkin"]
@@ -99,6 +99,20 @@ def read_locales(root):
     return out
 
 
+# same as ns.FormLabel: "(level 30)" / "(talent)" after a form not learned yet
+LEARN_AT = {"bear": 10, "aquatic": 16, "cat": 20, "travel": 30, "moonkin": "talent"}
+OPTION_FORM = {"useAquatic": "aquatic", "useTravel": "travel"}
+
+
+def form_label(L, text, kind, forms):
+    at = LEARN_AT.get(kind)
+    if not at or kind in forms:
+        return text
+    if at == "talent":
+        return text + " " + L["learnTalent"]
+    return text + " " + L["learnLevel"].replace("%d", str(at))
+
+
 def read_version(root):
     m = re.search(r"^## Version:\s*(\S+)", (root / "EzWoW-DruidForms.toc").read_text(encoding="utf-8"), re.M)
     return m.group(1) if m else ""
@@ -111,8 +125,8 @@ TEXT = {
         "badge": "설정창", "langLabel": "한국어",
         "sitTitle": "한 번 누르면",
         "sitRows": [
-            ("물속 (전투 중에도)", "aquatic", "수중 동물 변신 (켰을 때)"),
-            ("전투 밖 · 야외", "travel", "여행 변신 (없으면 표범)"),
+            ("물속 (전투 중에도)", "aquatic", "수중 생물 변신 (켰을 때)"),
+            ("전투 밖 · 야외", "travel", "날쌘 동물 변신 (없으면 표범)"),
             ("전투 밖 · 실내", "cat", "표범 변신 (끌 수 있음)"),
             ("야외·실내에서 다시", "caster", "원래 모습 (전투 밖)"),
             ("전투 중", "bear", "고른 변신 · 기본 곰"),
@@ -124,7 +138,7 @@ TEXT = {
             ("화면 버튼", "왼쪽 클릭으로 변신합니다. 아이콘은 지금 누르면 될 변신으로 계속 바뀝니다."),
             ("단축키", "지정한 키가 오른쪽 위에 짧게 보입니다."),
             ("전투 중 변신", "왼쪽 아래 글자는 전투 중에 누르면 될 변신입니다."),
-            ("빠른 설정 · 전투 중", "오른쪽 클릭으로 엽니다. 곰·표범·원래 모습·달빛야수 중 고르고, 배우지 않은 변신은 회색입니다."),
+            ("빠른 설정 · 전투 중", "오른쪽 클릭으로 엽니다. 곰·표범·원래 모습·달빛야수 중 고르고, 배우지 않은 변신은 회색이고 배우는 레벨이 함께 나옵니다."),
             ("빠른 설정 · 전투 밖", "물속·야외·실내 규칙과 Shift/Ctrl/Alt를 켜고 끕니다. 전투 중에 바꾸면 전투가 끝난 뒤 적용됩니다."),
             ("그 밖", "단축키 지정(설정 창에서 키 입력 대기), 설정 창 열기."),
             ("이동", "Ctrl을 누른 채 끌어서 옮깁니다. 위치는 저장되고 설정 창에서 초기화합니다."),
@@ -132,7 +146,7 @@ TEXT = {
         "sNotes": [
             ("배운 변신 · 단축키", "누르고 쓸 키를 입력합니다(Esc 취소, 휠·마우스 버튼 가능). 키의 기존 동작이 바뀌거나 Shift/Ctrl + 그 키가 다른 기능에 쓰이고 있으면 대화창에 알려 줍니다."),
             ("전투 중 누르면", "곰 · 표범 · 원래 모습 · 달빛야수. 이미 그 변신이면 풀리지 않습니다."),
-            ("전투 밖에서 누르면", "물속 → 수중(전투 중 물속도), 야외 → 여행, 실내 → 표범, 보조키 Shift = 곰 · Ctrl = 표범 · Alt = 풀기."),
+            ("전투 밖에서 누르면", "물속 → 수중 생물(전투 중 물속도), 야외 → 날쌘 동물, 실내 → 표범, 보조키 Shift = 곰 · Ctrl = 표범 · Alt = 풀기."),
             ("화면 버튼", "표시 여부, 크기 24~64, 위치 초기화. Ctrl + 드래그로 이동."),
             ("지금 쓰는 매크로", "설정대로 만든 매크로를 보여 줍니다. 길면 자동으로 나눠 실행하고, 창도 함께 늘어납니다."),
             ("언어 · 후원", "자동 + 8개 언어, 후원 링크 복사."),
@@ -158,7 +172,7 @@ TEXT = {
             ("On-screen button", "Left-click to shift. The icon always shows the form the next press gives."),
             ("Key", "The bound key, shortened, in the top right corner."),
             ("Combat form", "The bottom-left label is the form a press in combat goes to."),
-            ("Quick menu · combat", "Right-click to open. Pick Bear, Cat, Caster or Moonkin; forms you have not learned are grey."),
+            ("Quick menu · combat", "Right-click to open. Pick Bear, Cat, Caster or Moonkin; forms you have not learned are grey, with the level they come at."),
             ("Quick menu · out of combat", "Toggle the water / outdoors / indoors rules and Shift/Ctrl/Alt. Changes made in combat apply when it ends."),
             ("More", "Set the key (opens settings and waits for a key), open settings."),
             ("Move", "Hold Ctrl and drag. The position is saved; reset it in settings."),
@@ -287,9 +301,9 @@ def ui_page(lang, L, icon_uri):
             menu.append(f'<div class="abs nw" style="{inner}display:flex;align-items:center;padding-left:{g(8)};color:{ACCENT}">{esc(L[row[1]])}</div>')
             continue
         if row[0] == "r":
-            text, on, avail = L["form_" + row[1]], DB["combatForm"] == row[1], row[2]
+            text, on, avail = form_label(L, L["form_" + row[1]], row[1], f), DB["combatForm"] == row[1], row[2]
         elif row[0] == "c":
-            text, on, avail = L["opt_" + row[1]], DB[row[1]], row[2]
+            text, on, avail = form_label(L, L["opt_" + row[1]], OPTION_FORM.get(row[1]), f), DB[row[1]], row[2]
         else:
             text, on, avail = L["menu_" + row[1]], None, True
         color = (ACCENT if on else C["textBody"]) if avail else C["disabled"]
@@ -413,12 +427,12 @@ def settings_page(lang, L, icon_uri, version):
     for i, kind in enumerate(("bear", "cat", "caster", "moonkin")):
         avail = kind == "caster" or kind in f
         cls = "acc" if (avail and DB["combatForm"] == kind) else ("" if avail else "off")
-        btn(20 + i * 101, 208, 97, 28, L["form_" + kind], 11, cls)
+        btn(20 + i * 101, 208, 97, 28, form_label(L, L["form_" + kind], kind, f), 11, cls)
     section("secPlace", 254)
 
     def option(y, key):
         p.append(f'<div class="check" style="{g.box(23, y + 3, 18, 18)}"></div>')
-        lbl(48, y + 5, L["opt_" + key], 12, C["textBody"])
+        lbl(48, y + 5, form_label(L, L["opt_" + key], OPTION_FORM.get(key), f), 12, C["textBody"])
     for y, key in ((278, "useAquatic"), (304, "useTravel"), (330, "indoorCat"), (356, "useModifiers")):
         option(y, key)
     section("secButton", 394)

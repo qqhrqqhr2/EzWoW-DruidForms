@@ -30,6 +30,20 @@ local KINDS = {
       words = { "달빛야수", "moonkin", "mondkin", "sélénien", "lechúcico", "лунного", "枭兽", "梟獸" } },
 }
 
+-- Where each form is learned, shown next to a form that is not learned yet
+-- (a number = character level; "talent" = from the talent tree).
+local LEARN_AT = { bear = 10, aquatic = 16, cat = 20, travel = 30, moonkin = "talent" }
+-- the form a place option needs
+ns.OPTION_FORM = { useAquatic = "aquatic", useTravel = "travel" }
+
+-- Label with "(level 30)" / "(talent)" added when that form is not learned yet.
+function ns.FormLabel(text, kind)
+    local at = kind and LEARN_AT[kind]
+    if not at or ns.forms[kind] then return text end
+    if at == "talent" then return text .. " " .. ns:L("learnTalent") end
+    return text .. " " .. string.format(ns:L("learnLevel"), at)
+end
+
 local function spellName(spellID)
     if C_Spell and type(C_Spell.GetSpellInfo) == "function" then
         local ok, info = pcall(C_Spell.GetSpellInfo, spellID)
@@ -101,10 +115,13 @@ function ns.BuildMacro()
     -- button's macro holds at most 255 bytes.
     local f, db = ns.forms, ns.db
     local lines, clauses = {}, {}
+    -- cases that leave the form / stop: one condition list each ([a][b] = a or b),
+    -- so they cost one /cancelform and one /stopmacro line in all
+    local cancels, stops = {}, {}
     local function clause(cond, name) clauses[#clauses + 1] = cond .. " " .. name end
     if db.useModifiers then
-        lines[#lines + 1] = "/cancelform [mod:alt]"
-        lines[#lines + 1] = "/stopmacro [mod:alt]"
+        cancels[#cancels + 1] = "[mod:alt]"
+        stops[#stops + 1] = "[mod:alt]"
         if f.bear then clause("[mod:shift]", "!" .. f.bear.name) end
         if f.cat then clause("[mod:ctrl]", "!" .. f.cat.name) end
     end
@@ -112,17 +129,22 @@ function ns.BuildMacro()
     local water, outdoor, indoor = placeKinds()
     local swimForm = db.useAquatic and f.aquatic and "aquatic" or nil
     if swimForm then clause("[swimming]", "!" .. f.aquatic.name) end
+    local combatCond = "combat" .. (db.useModifiers and ",nomod" or "") .. (swimForm and ",noswimming" or "")
     if combatKind == "caster" then
         -- in combat (not swimming, no modifier): back to caster form, nothing cast
-        local cond = "[combat" .. (db.useModifiers and ",nomod" or "") .. (swimForm and ",noswimming" or "") .. "]"
-        lines[#lines + 1] = "/cancelform " .. cond
-        lines[#lines + 1] = "/stopmacro " .. cond
+        cancels[#cancels + 1] = "[" .. combatCond .. "]"
+        stops[#stops + 1] = "[" .. combatCond .. "]"
     else
+        -- in another form, casting the combat form straight away only spends mana
+        -- here: leave the old form first, then cast (same key press)
+        cancels[#cancels + 1] = "[" .. combatCond .. ",noform:" .. f[combatKind].index .. "]"
         clause("[combat]", "!" .. f[combatKind].name)
     end
     if water and not swimForm then clause("[swimming]", f[water].name) end
     if outdoor then clause("[outdoors]", f[outdoor].name) end
     if indoor then clause("[indoors]", f[indoor].name) end
+    if #cancels > 0 then lines[#lines + 1] = "/cancelform " .. table.concat(cancels) end
+    if #stops > 0 then lines[#lines + 1] = "/stopmacro " .. table.concat(stops) end
     if #clauses > 0 then lines[#lines + 1] = "/cast " .. table.concat(clauses, "; ") end
     return table.concat(lines, "\n")
 end
@@ -179,6 +201,11 @@ end
 
 -- Returns the first part; the rest go onto the chain buttons. Protected: out of combat.
 local function splitMacro(macro)
+    -- fits in one button: no chain (the reserve below is only for macros that are cut)
+    if #macro <= MACRO_LIMIT then
+        for _, b in ipairs(chainButtons) do b:SetAttribute("macrotext", "") end
+        return macro
+    end
     local lines = {}
     for line in macro:gmatch("[^\n]+") do lines[#lines + 1] = line end
     local parts, current = {}, {}
@@ -456,10 +483,10 @@ function ns.RefreshQuickMenu()
             row.text:SetPoint("RIGHT", -6, 0)
             local on
             if item.radio then
-                row.text:SetText(ns:L("form_" .. item.radio))
+                row.text:SetText(ns.FormLabel(ns:L("form_" .. item.radio), item.radio))
                 on = combatKind == item.radio
             elseif item.check then
-                row.text:SetText(ns:L("opt_" .. item.check))
+                row.text:SetText(ns.FormLabel(ns:L("opt_" .. item.check), ns.OPTION_FORM[item.check]))
                 on = db[item.check] and true or false
             else
                 row.text:SetText(ns:L("menu_" .. item.action))
