@@ -1,11 +1,9 @@
-# v1.0.4
+# v1.0.5
 
 ### 한국어
-- 변신 이름을 정식 서버 이름(날쌘 동물 변신, 수중 생물 변신)으로 맞췄습니다.
-- 아직 배우지 않은 변신 옆에 배우는 레벨(또는 특성)을 표시합니다.
-- 전투 중 다른 변신 상태에서 누르면 한 번에 고른 전투 변신으로 바뀝니다.
+- 게임패드를 지원합니다. 패드로 EzWoW 창을 다루고, 보기(Create) 버튼으로 화면의 EzWoW 프레임으로 이동합니다.
+- EzWoW 애드온끼리 퀘스트·희귀 몬스터·드롭·채집 기록을 공유합니다(기본 켜짐, `/ezshare`).
 
 ### English
-- Korean form names now match the live server (Travel Form, Aquatic Form).
-- Forms not learned yet now show the level (or talent) they come at.
-- In combat, pressing the key while in another form now switches to your combat form in one press.
+- Added gamepad support: EzWoW windows work with a gamepad, and View (Create) moves to the EzWoW frames on screen.
+- EzWoW addons now share quest, rare monster, drop and gathering records (on by default, `/ezshare`).
