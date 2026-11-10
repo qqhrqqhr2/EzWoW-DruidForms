@@ -42,6 +42,15 @@ One key for the right druid form in WoW Forever: Aquatic Form in water, Travel F
 - Right-click the on-screen button: pick the combat form, toggle the water / outdoors / indoors rules and the modifiers, set the key or open the settings.
 - Forms you have not learned are grey. Changes made in combat apply as soon as it ends.
 
+## Gamepad
+- With the gamepad UI on, EzWoW windows work with a gamepad: D-pad to move, A (✕) to press, X (□) for right-click, LB/RB to scroll, B (○) to close. A key guide in your pad's button style shows under the window.
+- With no game window open, press **View (Back) / Create** to move to the EzWoW frames on screen. Press it again or B to go back.
+- To use another button: Key Bindings > AddOns > EzWoW > "Gamepad: move to / leave the EzWoW frames" (with EzWoW-MapFinder installed).
+
+## Record sharing
+- Shared by all EzWoW addons and **on by default**: quest NPCs, rare monster sightings, item drops and gathering spots you have seen yourself are shared with other EzWoW users.
+- `/ezshare on` / `off`, `/ezshare channel on` / `off`, `/ezshare status`
+
 ## Commands
 - `/ezdf` or `/드루이드` — open the settings
 
@@ -87,6 +96,15 @@ WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물�
 ### 빠른 설정
 - 화면 버튼을 오른쪽 클릭하면 전투 중 변신, 물속·야외·실내 규칙, 보조키를 바로 바꾸고 단축키 지정이나 설정 창 열기로 갈 수 있습니다.
 - 배우지 않은 변신은 회색입니다. 전투 중에 바꾸면 전투가 끝나는 대로 적용됩니다.
+
+## 게임패드
+- 게임패드 UI를 켜면 EzWoW 창을 패드로 다룰 수 있습니다. 방향키로 이동, A(✕)로 누르기, X(□)로 오른쪽 클릭, LB/RB로 스크롤, B(○)로 닫기입니다. 창 아래에 연결된 패드 모양으로 키 안내가 나옵니다.
+- 블리자드 창이 열려 있지 않을 때 **보기(Back) / Create 버튼**을 누르면 화면의 EzWoW 프레임으로 이동합니다. 다시 누르거나 B를 누르면 돌아갑니다.
+- 다른 버튼을 쓰려면: 설정 > 단축키 > 애드온 > EzWoW > "게임패드: EzWoW 창으로 이동/돌아가기" (EzWoW-MapFinder 설치 시)
+
+## 기록 공유
+- 모든 EzWoW 애드온이 함께 쓰며 **기본으로 켜져 있습니다**. 직접 확인한 퀘스트 NPC, 희귀 몬스터 목격, 아이템 드롭, 채집 위치를 다른 EzWoW 사용자와 나눕니다.
+- `/ezshare on` / `off` (또는 `/공유`), `/ezshare channel on` / `off`, `/ezshare status`
 
 ## 명령어
 - `/ezdf` 또는 `/드루이드` — 설정창 열기
