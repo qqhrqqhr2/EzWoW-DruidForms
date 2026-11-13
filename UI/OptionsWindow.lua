@@ -23,7 +23,7 @@ local function finishCapture(key)
     if key then
         local action = type(GetBindingAction) == "function" and GetBindingAction(key) or ""
         if action ~= "" and action ~= ns.BindingName() then
-            ns.Print(string.format(ns:L("keyReplaced"), key, action))
+            ns.Print(string.format(ns:L("keyReplaced"), key, _G["BINDING_NAME_" .. action] or action))
         end
         -- Shift/Ctrl + this key bound elsewhere: those presses never reach this button
         if ns.db and ns.db.useModifiers and not key:find("%-") and type(GetBindingAction) == "function" then
@@ -268,7 +268,13 @@ function ns:ToggleOptions()
         items = langItems,
         colors = { accent = ns.Style.accent },
         get = function() return db.language end,
-        set = function(code) db.language = code ns.RefreshOptions() end,
+        set = function(code)
+            db.language = code
+            -- the key-binding name and the button's corner label are text too
+            _G["BINDING_NAME_" .. ns.BindingName()] = ns:L("bindingName")
+            if ns.ApplyButton then ns.ApplyButton() end
+            ns.RefreshOptions()
+        end,
     })
     local donateBtn = UIKit:CreateButton(configFrame, 197, 28, "", true)
     donateBtn:SetPoint("BOTTOMRIGHT", -20, 32)

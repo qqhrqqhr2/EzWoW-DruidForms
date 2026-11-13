@@ -108,18 +108,22 @@ local function placeKinds()
     return water, outdoor, indoor
 end
 
-function ns.BuildMacro()
+-- useMods: the Shift/Ctrl/Alt cases (default: the option). The key button leaves
+-- them out when its key itself carries a modifier: that modifier is down on
+-- every press, so its case would always win.
+function ns.BuildMacro(useMods)
     -- One /cast line with the cases in order (the first true one is cast). A "!"
     -- before a name never leaves that form when already in it; without "!" a second
     -- press out of combat leaves the form (the game's own toggle). Kept short: a
     -- button's macro holds at most 255 bytes.
     local f, db = ns.forms, ns.db
+    if useMods == nil then useMods = db.useModifiers end
     local lines, clauses = {}, {}
     -- cases that leave the form / stop: one condition list each ([a][b] = a or b),
     -- so they cost one /cancelform and one /stopmacro line in all
     local cancels, stops = {}, {}
     local function clause(cond, name) clauses[#clauses + 1] = cond .. " " .. name end
-    if db.useModifiers then
+    if useMods then
         cancels[#cancels + 1] = "[mod:alt]"
         stops[#stops + 1] = "[mod:alt]"
         if f.bear then clause("[mod:shift]", "!" .. f.bear.name) end
@@ -129,7 +133,7 @@ function ns.BuildMacro()
     local water, outdoor, indoor = placeKinds()
     local swimForm = db.useAquatic and f.aquatic and "aquatic" or nil
     if swimForm then clause("[swimming]", "!" .. f.aquatic.name) end
-    local combatCond = "combat" .. (db.useModifiers and ",nomod" or "") .. (swimForm and ",noswimming" or "")
+    local combatCond = "combat" .. (useMods and ",nomod" or "") .. (swimForm and ",noswimming" or "")
     if combatKind == "caster" then
         -- in combat (not swimming, no modifier): back to caster form, nothing cast
         cancels[#cancels + 1] = "[" .. combatCond .. "]"
@@ -242,13 +246,17 @@ function ns.ApplyButton()
     ns.RunAfterCombat("button", function()
         local db = ns.db
         local macro = splitMacro(ns.BuildMacro())
-        -- key button: follows the "cast on key down" setting
+        -- key button: follows the "cast on key down" setting. A key bound with
+        -- Shift/Ctrl/Alt (e.g. SHIFT-E) gets the macro without the modifier cases.
+        local boundKey = ns.GetBoundKey()
+        local keyMacro = (db.useModifiers and boundKey and boundKey:find("%-")) and splitMacro(ns.BuildMacro(false)) or macro
         keyButton:RegisterForClicks(keyDownMode() and "AnyDown" or "AnyUp")
         keyButton:SetAttribute("type", "macro")
-        keyButton:SetAttribute("macrotext", macro)
-        -- visible button: left = macro, right = quick menu (no secure action)
-        button:SetAttribute("type1", "macro")
-        button:SetAttribute("macrotext1", macro)
+        keyButton:SetAttribute("macrotext", keyMacro)
+        -- visible button: left = macro with or without Shift/Ctrl/Alt held ("*"),
+        -- right = quick menu (no secure action)
+        button:SetAttribute("*type1", "macro")
+        button:SetAttribute("*macrotext1", macro)
         button:SetSize(db.buttonSize, db.buttonSize)
         button:ClearAllPoints()
         local pos = db.buttonPos
@@ -345,10 +353,10 @@ local function createButtons()
         C_Timer.After(0.2, function() self.justMoved = false end)
     end)
     button:SetScript("PreClick", function(self)
-        if self.justMoved and not ns.InCombat() then self:SetAttribute("type1", nil) end
+        if self.justMoved and not ns.InCombat() then self:SetAttribute("*type1", nil) end
     end)
     button:SetScript("PostClick", function(self, mouse)
-        if self.justMoved and not ns.InCombat() then self:SetAttribute("type1", "macro") end
+        if self.justMoved and not ns.InCombat() then self:SetAttribute("*type1", "macro") end
         if mouse == "RightButton" and ns.ToggleQuickMenu then ns.ToggleQuickMenu(self) end
     end)
     button:SetScript("OnEnter", function(self)
