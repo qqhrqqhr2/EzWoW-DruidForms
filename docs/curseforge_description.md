@@ -9,11 +9,9 @@ CurseForge summary (KO): 단축키 하나로 물속은 수중 생물, 야외는 
 
 One key for the right druid form in WoW Forever: Aquatic Form in water, Travel Form outdoors, Cat Form indoors and the form of your choice in combat. Only the forms you have learned are used, so it follows your level. An on-screen button shows what the next press does.
 
-![On-screen button and quick menu](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/ui_en.png)
+![Settings window](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/ui_en.png)
 
-![Settings window](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/settings_en.png)
-
-*Mock-ups rebuilt from the sizes, coordinates, colours and strings in the addon code. Form icons are flat shapes; spell names and the key are examples.*
+*In-game screenshots (WoW Forever, Korean client). Character and player names and chat text are blurred.*
 
 ## Features
 
@@ -22,7 +20,7 @@ One key for the right druid form in WoW Forever: Aquatic Form in water, Travel F
 - **Out of combat, outdoors**: Travel Form (Cat Form if not learned yet).
 - **Out of combat, indoors**: Cat Form (can be turned off to stay as you are).
 - **Press again outdoors or indoors**: back to caster form.
-- **In combat**: Bear, Cat, Caster or Moonkin, your choice (Bear by default). Pressing again never drops the form.
+- **In combat**: Bear, Cat, Caster or Moonkin, your choice (Bear by default). Pressing again never drops the form; from another form it changes in one press.
 - **Modifiers** (any time, can be turned off): Shift = Bear, Ctrl = Cat, Alt = leave form. Shift and Ctrl keep you in the form if you are already in it.
 - The choice is made by the game's macro conditions, so it works in combat. The settings show the current macro; a macro too long for one button (long spell names) is split up and run in parts automatically.
 
@@ -40,7 +38,7 @@ One key for the right druid form in WoW Forever: Aquatic Form in water, Travel F
 
 ### Quick menu
 - Right-click the on-screen button: pick the combat form, toggle the water / outdoors / indoors rules and the modifiers, set the key or open the settings.
-- Forms you have not learned are grey. Changes made in combat apply as soon as it ends.
+- Forms you have not learned are grey, with the level (or talent) that teaches them. Changes made in combat apply as soon as it ends.
 
 ## Gamepad
 - With the gamepad UI on, EzWoW windows work with a gamepad: D-pad to move, A (✕) to press, X (□) for right-click, LB/RB to scroll, B (○) to close. A key guide in your pad's button style shows under the window.
@@ -64,11 +62,9 @@ Languages: English, 한국어, Deutsch, Français, Español, Русский, 简
 
 WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물속에서는 수중 생물 변신, 야외에서는 날쌘 동물 변신, 실내에서는 표범 변신, 전투 중에는 고른 변신을 합니다. 배운 변신만 쓰므로 레벨에 따라 자동으로 맞춰지고, 화면 버튼이 지금 누르면 될 변신을 보여 줍니다.
 
-![화면 버튼과 빠른 설정](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/ui_ko.png)
+![설정창](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/ui_ko.png)
 
-![설정창](https://raw.githubusercontent.com/qqhrqqhr2/EzWoW-DruidForms/master/docs/images/settings_ko.png)
-
-*애드온 코드의 크기·좌표·색상·문구로 재현한 예시 화면입니다. 변신 아이콘은 단순한 도형이고, 주문 이름·단축키는 예시입니다.*
+*실제 게임 화면입니다(WoW Forever, 한국어 클라이언트). 캐릭터 · 다른 플레이어 이름과 채팅 내용은 가렸습니다.*
 
 ## 기능
 
@@ -77,7 +73,7 @@ WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물�
 - **전투 밖 · 야외**: 날쌘 동물 변신(아직 없으면 표범).
 - **전투 밖 · 실내**: 표범 변신(끄면 실내에서는 그대로).
 - **야외·실내에서 다시 누르면**: 원래 모습.
-- **전투 중**: 곰 · 표범 · 원래 모습 · 달빛야수 중 고른 변신(기본 곰). 다시 눌러도 풀리지 않습니다.
+- **전투 중**: 곰 · 표범 · 원래 모습 · 달빛야수 중 고른 변신(기본 곰). 다시 눌러도 풀리지 않고, 다른 변신 중이어도 한 번에 바뀝니다.
 - **보조키** (언제나, 끌 수 있음): Shift = 곰, Ctrl = 표범, Alt = 변신 풀기. Shift·Ctrl은 이미 그 변신이면 그대로 유지합니다.
 - 판단은 게임 매크로 조건으로 하므로 전투 중에도 동작합니다. 설정 창에서 지금 쓰는 매크로를 볼 수 있고, 주문 이름이 길어 매크로가 한 번에 들어가지 않으면 자동으로 나눠 실행합니다.
 
@@ -95,7 +91,7 @@ WoW Forever용 드루이드 변신 애드온입니다. 단축키 하나로 물�
 
 ### 빠른 설정
 - 화면 버튼을 오른쪽 클릭하면 전투 중 변신, 물속·야외·실내 규칙, 보조키를 바로 바꾸고 단축키 지정이나 설정 창 열기로 갈 수 있습니다.
-- 배우지 않은 변신은 회색입니다. 전투 중에 바꾸면 전투가 끝나는 대로 적용됩니다.
+- 배우지 않은 변신은 회색이고, 옆에 배우는 레벨(또는 특성)이 나옵니다. 전투 중에 바꾸면 전투가 끝나는 대로 적용됩니다.
 
 ## 게임패드
 - 게임패드 UI를 켜면 EzWoW 창을 패드로 다룰 수 있습니다. 방향키로 이동, A(✕)로 누르기, X(□)로 오른쪽 클릭, LB/RB로 스크롤, B(○)로 닫기입니다. 창 아래에 연결된 패드 모양으로 키 안내가 나옵니다.
