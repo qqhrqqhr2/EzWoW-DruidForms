@@ -22,7 +22,7 @@
 ## Notes-zhTW: 一個鍵依情況（水中、戶外、室內、戰鬥）切換合適的德魯伊形態。(/ezdf)
 ## X-License: GPL-3.0
 ## Author: qqhrqqhr2
-## Version: 1.0.9
+## Version: 1.0.10
 ## Category: EzWoW
 ## IconTexture: Interface\AddOns\EzWoW-DruidForms\Media\Icon
 ## SavedVariables: EzWoW_DruidFormsDB, EzWoW_SharedData, EzWoW_ShareStore_DruidForms
